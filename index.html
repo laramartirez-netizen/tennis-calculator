@@ -118,7 +118,7 @@ function calculateFees() {
     const grandTotal = totalMemberCost + totalGuestFees;
 
     // Correct fee calculation with tip included
-    const feePerMember = (grandTotal - totalGuestFees) / members;
+    const feePerMember = (grandTotal - totalGuestFees) / totalPlayers;
     const feePerGuest = feePerMember + guestFee;
 
     document.getElementById('results').innerHTML = `
