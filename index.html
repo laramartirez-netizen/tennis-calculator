@@ -113,12 +113,12 @@ function calculateFees() {
         breakdown += `<strong>Court ${i+1}:</strong> Court Fee ₱${thisCourt.toFixed(2)}, Ballboys ₱${thisBallboy.toFixed(2)}, Tennis Fund ₱${thisTennisFund.toFixed(2)}, Ball Can ₱${thisBallcan.toFixed(2)}<br>`;
     });
 
-    const totalMemberCost = courtCost + ballboyCost + tennisFundCost + ballcanCost;
+    const totalMemberCost = courtCost + ballboyCost + tennisFundCost + ballcanCost + totalTip;
     const totalGuestFees = guests * guestFee;
     const grandTotal = totalMemberCost + totalGuestFees;
 
     // Correct fee calculation with tip included
-    const feePerMember = (grandTotal - totalGuestFees) / members + tipPerPlayer;
+    const feePerMember = (grandTotal - totalGuestFees) / members;
     const feePerGuest = feePerMember + guestFee;
 
     document.getElementById('results').innerHTML = `
