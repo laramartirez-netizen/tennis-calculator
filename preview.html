@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tennis Fee Calculator - Corrected</title>
+<style>
+body { font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; background:#f5f6fa; color:#1c1c1e; display:flex; justify-content:center; padding:20px; }
+.container { max-width:900px; width:100%; background:#fff; border-radius:25px; padding:30px; box-shadow:0 12px 30px rgba(0,0,0,0.1); }
+h1 { text-align:center; margin-bottom:25px; font-size:28px; color:#222; }
+label { display:block; margin-top:12px; font-weight:600; }
+input, select { width:100%; padding:12px 15px; margin-top:6px; border-radius:15px; border:1px solid #dcdde1; font-size:16px; background:#f8f9fa; }
+button { margin-top:15px; padding:12px; width:100%; border:none; border-radius:25px; background:#1e90ff; color:white; font-size:18px; font-weight:600; cursor:pointer; transition:0.3s; }
+button:hover { background:#1c7ed6; }
+.court-carousel { display:flex; overflow-x:auto; scroll-behavior:smooth; margin-top:20px; padding-bottom:15px; }
+.court-card { min-width:250px; background:#f1f3f5; margin-right:15px; border-radius:20px; padding:20px; flex-shrink:0; box-shadow:0 8px 20px rgba(0,0,0,0.08); }
+.court-card h3 { text-align:center; margin-bottom:15px; }
+.remove-btn { background:#ff6b6b; border:none; color:white; padding:8px 12px; border-radius:15px; font-weight:bold; cursor:pointer; margin-top:10px; width:100%; }
+.results { margin-top:25px; background:#f1f3f5; border-radius:20px; padding:20px; font-size:16px; line-height:1.6; }
+.add-btn { background:#51cf66; border-radius:25px; padding:12px; font-weight:bold; cursor:pointer; width:100%; }
+</style>
+</head>
+<body>
+<div class="container">
+<h1>Tennis Fee Calculator</h1>
+
+<label>Total Number of Players</label>
+<input type="number" id="totalPlayers" min="1" value="6">
+<label>Number of Members</label>
+<input type="number" id="members" min="1" value="4">
+<label>Guest Fee (₱ per guest)</label>
+<input type="number" id="guestFee" min="0" value="250">
+<label>Tennis Fund Fee per Hour per Court (₱)</label>
+<input type="number" id="tennisFundFee" min="0" value="20">
+
+<h2>Courts</h2>
+<button class="add-btn" onclick="addCourtCard()">+ Add Court</button>
+<div class="court-carousel" id="courtCarousel"></div>
+
+<button onclick="calculateFees()">Calculate Fees</button>
+<div class="results" id="results"></div>
+</div>
+
+<script>
+const BALLBOY_FEE = 140;
+const BALLCAN_FEE = 350;
+let courtCount = 0;
+
+function addCourtCard(hours=2, ballboys=1, lights='with', ballcan=false) {
+    courtCount++;
+    const carousel = document.getElementById('courtCarousel');
+    const card = document.createElement('div');
+    card.className = 'court-card';
+    card.id = 'courtCard'+courtCount;
+    card.innerHTML = `
+        <h3>Court ${courtCount}</h3>
+        <label>Hours</label><input type="number" value="${hours}" min="0">
+        <label>Ball Boys</label><input type="number" value="${ballboys}" min="0">
+        <label>Lights</label>
+        <select>
+            <option value="with" ${lights==='with'?'selected':''}>With Lights (₱190/hr)</option>
+            <option value="without" ${lights==='without'?'selected':''}>Without Lights (₱88/hr)</option>
+        </select>
+        <label>Ball Can?</label>
+        <select>
+            <option value="no" ${ballcan===false?'selected':''}>No</option>
+            <option value="yes" ${ballcan===true?'selected':''}>Yes (₱350)</option>
+        </select>
+        <button class="remove-btn" onclick="removeCourtCard('${card.id}')">Remove Court</button>
+    `;
+    carousel.appendChild(card);
+}
+
+function removeCourtCard(id) { document.getElementById(id).remove(); }
+
+function calculateFees() {
+    const totalPlayers = parseFloat(document.getElementById('totalPlayers').value);
+    const members = parseFloat(document.getElementById('members').value);
+    const guests = Math.max(0, totalPlayers - members);
+    const guestFee = parseFloat(document.getElementById('guestFee').value);
+    const tennisFundFee = parseFloat(document.getElementById('tennisFundFee').value);
+
+    const cards = document.querySelectorAll('.court-card');
+    let courtCost = 0, ballboyCost = 0, tennisFundCost = 0, ballcanCost = 0;
+    let breakdown = '';
+
+    cards.forEach((card, i) => {
+        const hours = parseFloat(card.querySelectorAll('input')[0].value);
+        const ballboys = parseFloat(card.querySelectorAll('input')[1].value);
+        const lights = card.querySelectorAll('select')[0].value;
+        const ballcanUsed = card.querySelectorAll('select')[1].value;
+        const courtFee = (lights==='with')?190:88;
+
+        const thisCourt = hours*courtFee;
+        const thisBallboy = hours*ballboys*BALLBOY_FEE;
+        const thisTennisFund = hours*tennisFundFee;
+        const thisBallcan = (ballcanUsed==='yes')?BALLCAN_FEE:0;
+
+        courtCost += thisCourt;
+        ballboyCost += thisBallboy;
+        tennisFundCost += thisTennisFund;
+        ballcanCost += thisBallcan;
+
+        breakdown += `<strong>Court ${i+1}:</strong> Court Fee ₱${thisCourt.toFixed(2)}, Ballboys ₱${thisBallboy.toFixed(2)}, Tennis Fund ₱${thisTennisFund.toFixed(2)}, Ball Can ₱${thisBallcan.toFixed(2)}<br>`;
+    });
+
+    const totalMemberCost = courtCost + ballboyCost + tennisFundCost + ballcanCost;
+    const totalGuestFees = guests * guestFee;
+    const grandTotal = totalMemberCost + totalGuestFees;
+
+    // Correct fee calculation per your rule
+    const feePerMember = (grandTotal - totalGuestFees) / totalPlayers;
+    const feePerGuest = feePerMember + guestFee;
+
+    document.getElementById('results').innerHTML = `
+        <strong>Number of Guests:</strong> ${guests}<br>
+        <strong>Fee per Member:</strong> ₱${feePerMember.toFixed(2)}<br>
+        <strong>Fee per Guest:</strong> ₱${feePerGuest.toFixed(2)}<br>
+        <strong>Grand Total:</strong> ₱${grandTotal.toFixed(2)}<br><br>
+        <strong>Breakdown per Court:</strong><br>${breakdown}
+    `;
+}
+
+// Default courts
+addCourtCard(2,1,'with',true);
+addCourtCard(1.5,1,'without',false);
+</script>
+</body>
+</html>
