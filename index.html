@@ -98,7 +98,9 @@ function toggleBallCanInput(select) {
 function removeCourtCard(id) {
     document.getElementById(id).remove();
 }
-
+// Default courts
+addCourtCard(3,2,'with',true);
+addCourtCard(3,2,'with',true);
 <script>
 function calculateFees() {
     const totalPlayers = Number(document.getElementById('totalPlayers').value);
@@ -202,9 +204,7 @@ function copyMessage() {
 }
 </script>
 
-// Default courts
-addCourtCard(3,2,'with',true);
-addCourtCard(3,2,'with',true);
+
 </script>
 </body>
 </html>
