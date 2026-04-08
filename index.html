@@ -99,64 +99,108 @@ function removeCourtCard(id) {
     document.getElementById(id).remove();
 }
 
+<script>
 function calculateFees() {
-    const totalPlayers = parseFloat(document.getElementById('totalPlayers').value);
-    const members = parseFloat(document.getElementById('members').value);
+    const totalPlayers = Number(document.getElementById('totalPlayers').value);
+    const members = Number(document.getElementById('members').value);
     const guests = Math.max(0, totalPlayers - members);
-    const guestFee = parseFloat(document.getElementById('guestFee').value);
-    const tennisFundFee = parseFloat(document.getElementById('tennisFundFee').value);
-    const totalTip = parseFloat(document.getElementById('totalTip').value);
 
-    const tipPerPlayer = totalTip / totalPlayers;
+    const guestFee = Number(document.getElementById('guestFee').value);
+    const tennisFundFee = Number(document.getElementById('tennisFundFee').value);
+    const totalTip = Number(document.getElementById('totalTip').value);
 
-    const cards = document.querySelectorAll('.court-card');
-    let courtCost = 0, ballboyCost = 0, tennisFundCost = 0, ballcanCost = 0;
+    let courtCost = 0;
+    let ballboyCost = 0;
+    let tennisFundCost = 0;
+    let ballcanCost = 0;
     let breakdown = '';
 
-    cards.forEach((card, i) => {
-        const hours = parseFloat(card.querySelectorAll('input')[0].value);
-        const ballboys = parseFloat(card.querySelectorAll('input')[1].value);
-        const lights = card.querySelectorAll('select')[0].value;
-const ballcanUsed = card.querySelectorAll('select')[1].value;
+    document.querySelectorAll('.court-card').forEach((card, index) => {
+        const inputs = card.querySelectorAll('input');
+        const selects = card.querySelectorAll('select');
 
-let thisBallcan = 0;
-if (ballcanUsed === 'yes') {
-    thisBallcan = parseFloat(card.querySelector('.ballcan-fee-container input').value) || 0;
-}        const courtFee = (lights==='with')?190:88;
+        const hours = Number(inputs[0].value);
+        const ballboys = Number(inputs[1].value);
+        const lights = selects[0].value;
+        const ballcan = selects[1].value;
 
-        const thisCourt = hours*courtFee;
-        const thisBallboy = hours*ballboys*BALLBOY_FEE;
-        const thisTennisFund = hours*tennisFundFee;
+        const courtFee = lights === 'with' ? 190 : 88;
+
+        const thisCourt = hours * courtFee;
+        const thisBallboy = hours * ballboys * 140;
+        const thisTennisFund = hours * tennisFundFee;
+
+        let thisBallcan = 0;
+        if (ballcan === 'yes') {
+            thisBallcan = Number(inputs[2]?.value || 0);
+        }
 
         courtCost += thisCourt;
         ballboyCost += thisBallboy;
         tennisFundCost += thisTennisFund;
         ballcanCost += thisBallcan;
 
-        breakdown += `<strong>Court ${i+1}:</strong> Court Fee ₱${thisCourt.toFixed(2)}, Ballboys ₱${thisBallboy.toFixed(2)}, Tennis Fund ₱${thisTennisFund.toFixed(2)}, Ball Can ₱${thisBallcan.toFixed(2)}<br>`;
+        breakdown += `
+            <strong>Court ${index+1}</strong><br>
+            Court Fee: ₱${thisCourt.toFixed(2)}<br>
+            Ball Boys: ₱${thisBallboy.toFixed(2)}<br>
+            Tennis Fund: ₱${thisTennisFund.toFixed(2)}<br>
+            Ball Can: ₱${thisBallcan.toFixed(2)}<br><br>
+        `;
     });
 
-    const totalMemberCost = courtCost + ballboyCost + tennisFundCost + ballcanCost + totalTip;
     const totalGuestFees = guests * guestFee;
-    const grandTotal = totalMemberCost + totalGuestFees;
+    const totalSharedCost = courtCost + ballboyCost + tennisFundCost + ballcanCost + totalTip;
 
-    // Correct fee calculation with tip included
-    const feePerMember = (grandTotal - totalGuestFees) / totalPlayers;
-    const feePerGuest = feePerMember + guestFee;
+    const feePerMember = Math.round(totalSharedCost / totalPlayers);
+    const feePerGuest = Math.round(feePerMember + guestFee);
+    const grandTotal = totalSharedCost + totalGuestFees;
+
+    const paymentMessage = `Hey guys! Thanks again for the fun games 🎾
+
+Member: ₱${feePerMember}
+Guest: ₱${feePerGuest}
+
+Please transfer to GCash:
+0917 623 6323`;
 
     document.getElementById('results').innerHTML = `
-        <strong>Number of Guests:</strong> ${guests}<br>
-        <strong>Tip per Player:</strong> ₱${tipPerPlayer.toFixed(2)}<br>
-        <strong>Fee per Member:</strong> ₱${feePerMember.toFixed(2)}<br>
-        <strong>Fee per Guest:</strong> ₱${feePerGuest.toFixed(2)}<br>
+        <strong>Guests:</strong> ${guests}<br>
+        <strong>Fee per Member:</strong> ₱${feePerMember}<br>
+        <strong>Fee per Guest:</strong> ₱${feePerGuest}<br>
         <strong>Grand Total:</strong> ₱${grandTotal.toFixed(2)}<br><br>
-        <strong>Breakdown per Court:</strong><br>${breakdown}
-<br>
-        <div contenteditable="true" style="background-color: white; border-radius:25px; border: 1px solid #dcdde1; padding: 10px;"> Hey guys! Thanks again for the fun games. Please transfer the following: <br>
-        - Member: Php ${feePerMember.toFixed(2)} <br>
-        - Guest: Php ${feePerGuest.toFixed(2)} <br> to my Gcash 0917 623 6323 Thanks!</div>
+
+        <strong>Breakdown:</strong><br>
+        ${breakdown}
+
+        <div class="message-box" id="paymentText" contenteditable="true">${paymentMessage.replace(/\n/g,'<br>')}</div>
+
+        <button onclick="copyMessage()" style="
+            margin-top:10px;
+            background:#111827;
+            color:white;
+            border:none;
+            padding:12px;
+            border-radius:16px;
+            width:100%;
+            cursor:pointer;
+            font-weight:600;
+        " id="copyBtn">📋 Copy Message</button>
     `;
 }
+
+function copyMessage() {
+    const text = document.getElementById('paymentText').innerText;
+    navigator.clipboard.writeText(text);
+
+    const btn = document.getElementById('copyBtn');
+    btn.innerText = 'Copied! ✅';
+
+    setTimeout(() => {
+        btn.innerText = '📋 Copy Message';
+    }, 1500);
+}
+</script>
 
 // Default courts
 addCourtCard(3,2,'with',true);
