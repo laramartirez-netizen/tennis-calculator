@@ -49,35 +49,55 @@ button:hover { background:#1c7ed6; }
 
 <script>
 const BALLBOY_FEE = 140;
-const BALLCAN_FEE = 350;
 let courtCount = 0;
 
-function addCourtCard(hours=3, ballboys=2, lights='with', ballcan=true) {
+function addCourtCard(hours=3, ballboys=2, lights='with', ballcan=true, ballcanFee=350) {
     courtCount++;
     const carousel = document.getElementById('courtCarousel');
     const card = document.createElement('div');
     card.className = 'court-card';
     card.id = 'courtCard'+courtCount;
+
     card.innerHTML = `
         <h3>Court ${courtCount}</h3>
-        <label>Hours</label><input type="number" value="${hours}" min="0">
-        <label>Ball Boys</label><input type="number" value="${ballboys}" min="0">
+
+        <label>Hours</label>
+        <input type="number" value="${hours}" min="0">
+
+        <label>Ball Boys</label>
+        <input type="number" value="${ballboys}" min="0">
+
         <label>Lights</label>
         <select>
             <option value="with" ${lights==='with'?'selected':''}>Yes</option>
             <option value="without" ${lights==='without'?'selected':''}>No</option>
         </select>
+
         <label>Ball Can?</label>
-        <select>
+        <select onchange="toggleBallCanInput(this)">
             <option value="no" ${ballcan===false?'selected':''}>No</option>
-            <option value="yes" ${ballcan===true?'selected':''}>Yes (₱350)</option>
+            <option value="yes" ${ballcan===true?'selected':''}>Yes</option>
         </select>
+
+        <div class="ballcan-fee-container" style="display:${ballcan ? 'block' : 'none'};">
+            <label>Ball Can Fee (₱)</label>
+            <input type="number" value="${ballcanFee}" min="0">
+        </div>
+
         <button class="remove-btn" onclick="removeCourtCard('${card.id}')">Remove Court</button>
     `;
+
     carousel.appendChild(card);
 }
 
-function removeCourtCard(id) { document.getElementById(id).remove(); }
+function toggleBallCanInput(select) {
+    const container = select.parentElement.querySelector('.ballcan-fee-container');
+    container.style.display = select.value === 'yes' ? 'block' : 'none';
+}
+
+function removeCourtCard(id) {
+    document.getElementById(id).remove();
+}
 
 function calculateFees() {
     const totalPlayers = parseFloat(document.getElementById('totalPlayers').value);
@@ -97,13 +117,16 @@ function calculateFees() {
         const hours = parseFloat(card.querySelectorAll('input')[0].value);
         const ballboys = parseFloat(card.querySelectorAll('input')[1].value);
         const lights = card.querySelectorAll('select')[0].value;
-        const ballcanUsed = card.querySelectorAll('select')[1].value;
-        const courtFee = (lights==='with')?190:88;
+const ballcanUsed = card.querySelectorAll('select')[1].value;
+
+let thisBallcan = 0;
+if (ballcanUsed === 'yes') {
+    thisBallcan = parseFloat(card.querySelector('.ballcan-fee-container input').value) || 0;
+}        const courtFee = (lights==='with')?190:88;
 
         const thisCourt = hours*courtFee;
         const thisBallboy = hours*ballboys*BALLBOY_FEE;
         const thisTennisFund = hours*tennisFundFee;
-        const thisBallcan = (ballcanUsed==='yes')?BALLCAN_FEE:0;
 
         courtCost += thisCourt;
         ballboyCost += thisBallboy;
