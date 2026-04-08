@@ -4,47 +4,163 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Lara's Tennis Fee Calculator</title>
+
 <style>
-body { font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; background:#f5f6fa; color:#1c1c1e; display:flex; justify-content:center; padding:20px; }
-.container { max-width:900px; width:100%; background:#fff; border-radius:25px; padding:30px; box-shadow:0 12px 30px rgba(0,0,0,0.1); }
-h1 { text-align:center; margin-bottom:25px; font-size:28px; color:#222; }
-label { display:block; margin-top:12px; font-weight:600; }
-input, select { width:100%; padding:12px 15px; margin-top:6px; border-radius:15px; border:1px solid #dcdde1; font-size:16px; background:#f8f9fa; }
-button { margin-top:15px; padding:12px; width:100%; border:none; border-radius:25px; background:#1e90ff; color:white; font-size:18px; font-weight:600; cursor:pointer; transition:0.3s; }
-button:hover { background:#1c7ed6; }
-.court-carousel { display:flex; overflow-x:auto; scroll-behavior:smooth; margin-top:20px; padding-bottom:15px; }
-.court-card { min-width:250px; background:#f1f3f5; margin-right:15px; border-radius:20px; padding:20px; flex-shrink:0; box-shadow:0 8px 20px rgba(0,0,0,0.08); }
-.court-card h3 { text-align:center; margin-bottom:15px; }
-.remove-btn { background:#ff6b6b; border:none; color:white; padding:8px 12px; border-radius:15px; font-weight:bold; cursor:pointer; margin-top:10px; width:100%; }
-.results { margin-top:25px; background:#f1f3f5; border-radius:20px; padding:20px; font-size:16px; line-height:1.6; }
-.add-btn { background:#51cf66; border-radius:25px; padding:12px; font-weight:bold; cursor:pointer; width:100%; }
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #f4f6f8;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.container {
+    width: 100%;
+    max-width: 950px;
+    background: white;
+    border-radius: 28px;
+    padding: 30px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #1f2937;
+}
+
+h2 {
+    margin-top: 30px;
+    color: #374151;
+}
+
+label {
+    display: block;
+    margin-top: 14px;
+    font-weight: 600;
+    color: #374151;
+}
+
+input, select {
+    width: 100%;
+    padding: 12px 14px;
+    margin-top: 6px;
+    border-radius: 14px;
+    border: 1px solid #d1d5db;
+    font-size: 15px;
+    background: #f9fafb;
+    box-sizing: border-box;
+}
+
+button {
+    width: 100%;
+    padding: 13px;
+    border: none;
+    border-radius: 20px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 15px;
+    transition: 0.25s;
+}
+
+.add-btn {
+    background: #22c55e;
+    color: white;
+}
+
+.add-btn:hover {
+    background: #16a34a;
+}
+
+.calc-btn {
+    background: #2563eb;
+    color: white;
+}
+
+.calc-btn:hover {
+    background: #1d4ed8;
+}
+
+.remove-btn {
+    background: #ef4444;
+    color: white;
+}
+
+.remove-btn:hover {
+    background: #dc2626;
+}
+
+.court-carousel {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    padding-bottom: 15px;
+    margin-top: 15px;
+}
+
+.court-card {
+    min-width: 270px;
+    background: #f8fafc;
+    border-radius: 22px;
+    padding: 20px;
+    box-shadow: 0 8px 18px rgba(0,0,0,0.05);
+    flex-shrink: 0;
+}
+
+.court-card h3 {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.results {
+    margin-top: 25px;
+    background: #f3f4f6;
+    border-radius: 20px;
+    padding: 22px;
+    line-height: 1.7;
+}
+
+.message-box {
+    margin-top: 15px;
+    background: white;
+    border: 1px solid #d1d5db;
+    border-radius: 18px;
+    padding: 14px;
+}
 </style>
 </head>
+
 <body>
+
 <div class="container">
-<h1>Lara's Tennis Fee Calculator</h1>
+    <h1>🎾 Lara's Tennis Fee Calculator</h1>
 
-<label>Total Number of Players</label>
-<input type="number" id="totalPlayers" min="1" value="14">
+    <label>Total Number of Players</label>
+    <input type="number" id="totalPlayers" value="14" min="1">
 
-<label>Number of Members</label>
-<input type="number" id="members" min="1" value="6">
+    <label>Number of Members</label>
+    <input type="number" id="members" value="6" min="0">
 
-<label>Guest Fee (₱ per guest)</label>
-<input type="number" id="guestFee" min="0" value="250">
+    <label>Guest Fee (₱)</label>
+    <input type="number" id="guestFee" value="250" min="0">
 
-<label>Tennis Fund Fee per Hour per Court (₱)</label>
-<input type="number" id="tennisFundFee" min="0" value="20">
+    <label>Tennis Fund Fee / Hour / Court (₱)</label>
+    <input type="number" id="tennisFundFee" value="20" min="0">
 
-<label>Total Tip (₱)</label>
-<input type="number" id="totalTip" min="0" value="0">
+    <label>Total Tip (₱)</label>
+    <input type="number" id="totalTip" value="0" min="0">
 
-<h2>Courts</h2>
-<button class="add-btn" onclick="addCourtCard()">+ Add Court</button>
-<div class="court-carousel" id="courtCarousel"></div>
+    <h2>Courts</h2>
 
-<button onclick="calculateFees()">Calculate Fees</button>
-<div class="results" id="results"></div>
+    <button class="add-btn" onclick="addCourtCard()">+ Add Court</button>
+
+    <div class="court-carousel" id="courtCarousel"></div>
+
+    <button class="calc-btn" onclick="calculateFees()">Calculate Fees</button>
+
+    <div class="results" id="results"></div>
 </div>
 
 <script>
@@ -53,10 +169,10 @@ let courtCount = 0;
 
 function addCourtCard(hours=3, ballboys=2, lights='with', ballcan=true, ballcanFee=350) {
     courtCount++;
-    const carousel = document.getElementById('courtCarousel');
+
     const card = document.createElement('div');
     card.className = 'court-card';
-    card.id = 'courtCard'+courtCount;
+    card.id = 'courtCard' + courtCount;
 
     card.innerHTML = `
         <h3>Court ${courtCount}</h3>
@@ -74,12 +190,12 @@ function addCourtCard(hours=3, ballboys=2, lights='with', ballcan=true, ballcanF
         </select>
 
         <label>Ball Can?</label>
-        <select onchange="toggleBallCanInput(this)">
-            <option value="no" ${ballcan===false?'selected':''}>No</option>
-            <option value="yes" ${ballcan===true?'selected':''}>Yes</option>
+        <select onchange="toggleBallCan(this)">
+            <option value="no" ${!ballcan?'selected':''}>No</option>
+            <option value="yes" ${ballcan?'selected':''}>Yes</option>
         </select>
 
-        <div class="ballcan-fee-container" style="display:${ballcan ? 'block' : 'none'};">
+        <div class="ballcan-container" style="display:${ballcan?'block':'none'};">
             <label>Ball Can Fee (₱)</label>
             <input type="number" value="${ballcanFee}" min="0">
         </div>
@@ -87,11 +203,11 @@ function addCourtCard(hours=3, ballboys=2, lights='with', ballcan=true, ballcanF
         <button class="remove-btn" onclick="removeCourtCard('${card.id}')">Remove Court</button>
     `;
 
-    carousel.appendChild(card);
+    document.getElementById('courtCarousel').appendChild(card);
 }
 
-function toggleBallCanInput(select) {
-    const container = select.parentElement.querySelector('.ballcan-fee-container');
+function toggleBallCan(select) {
+    const container = select.parentElement.querySelector('.ballcan-container');
     container.style.display = select.value === 'yes' ? 'block' : 'none';
 }
 
@@ -100,67 +216,109 @@ function removeCourtCard(id) {
 }
 
 function calculateFees() {
-    const totalPlayers = parseFloat(document.getElementById('totalPlayers').value);
-    const members = parseFloat(document.getElementById('members').value);
+    const totalPlayers = Number(document.getElementById('totalPlayers').value);
+    const members = Number(document.getElementById('members').value);
     const guests = Math.max(0, totalPlayers - members);
-    const guestFee = parseFloat(document.getElementById('guestFee').value);
-    const tennisFundFee = parseFloat(document.getElementById('tennisFundFee').value);
-    const totalTip = parseFloat(document.getElementById('totalTip').value);
 
-    const tipPerPlayer = totalTip / totalPlayers;
+    const guestFee = Number(document.getElementById('guestFee').value);
+    const tennisFundFee = Number(document.getElementById('tennisFundFee').value);
+    const totalTip = Number(document.getElementById('totalTip').value);
 
-    const cards = document.querySelectorAll('.court-card');
-    let courtCost = 0, ballboyCost = 0, tennisFundCost = 0, ballcanCost = 0;
+    let courtCost = 0;
+    let ballboyCost = 0;
+    let tennisFundCost = 0;
+    let ballcanCost = 0;
     let breakdown = '';
 
-    cards.forEach((card, i) => {
-        const hours = parseFloat(card.querySelectorAll('input')[0].value);
-        const ballboys = parseFloat(card.querySelectorAll('input')[1].value);
-        const lights = card.querySelectorAll('select')[0].value;
-const ballcanUsed = card.querySelectorAll('select')[1].value;
+    document.querySelectorAll('.court-card').forEach((card, index) => {
+        const inputs = card.querySelectorAll('input');
+        const selects = card.querySelectorAll('select');
 
-let thisBallcan = 0;
-if (ballcanUsed === 'yes') {
-    thisBallcan = parseFloat(card.querySelector('.ballcan-fee-container input').value) || 0;
-}        const courtFee = (lights==='with')?190:88;
+        const hours = Number(inputs[0].value);
+        const ballboys = Number(inputs[1].value);
+        const lights = selects[0].value;
+        const ballcan = selects[1].value;
 
-        const thisCourt = hours*courtFee;
-        const thisBallboy = hours*ballboys*BALLBOY_FEE;
-        const thisTennisFund = hours*tennisFundFee;
+        const courtFee = lights === 'with' ? 190 : 88;
+
+        const thisCourt = hours * courtFee;
+        const thisBallboy = hours * ballboys * BALLBOY_FEE;
+        const thisTennisFund = hours * tennisFundFee;
+
+        let thisBallcan = 0;
+        if (ballcan === 'yes') {
+            thisBallcan = Number(inputs[2]?.value || 0);
+        }
 
         courtCost += thisCourt;
         ballboyCost += thisBallboy;
         tennisFundCost += thisTennisFund;
         ballcanCost += thisBallcan;
 
-        breakdown += `<strong>Court ${i+1}:</strong> Court Fee ₱${thisCourt.toFixed(2)}, Ballboys ₱${thisBallboy.toFixed(2)}, Tennis Fund ₱${thisTennisFund.toFixed(2)}, Ball Can ₱${thisBallcan.toFixed(2)}<br>`;
+        breakdown += `
+            <strong>Court ${index+1}</strong><br>
+            Court Fee: ₱${thisCourt.toFixed(2)}<br>
+            Ball Boys: ₱${thisBallboy.toFixed(2)}<br>
+            Tennis Fund: ₱${thisTennisFund.toFixed(2)}<br>
+            Ball Can: ₱${thisBallcan.toFixed(2)}<br><br>
+        `;
     });
 
-    const totalMemberCost = courtCost + ballboyCost + tennisFundCost + ballcanCost + totalTip;
     const totalGuestFees = guests * guestFee;
-    const grandTotal = totalMemberCost + totalGuestFees;
+    const totalSharedCost = courtCost + ballboyCost + tennisFundCost + ballcanCost + totalTip;
 
-    // Correct fee calculation with tip included
-    const feePerMember = (grandTotal - totalGuestFees) / totalPlayers;
-    const feePerGuest = feePerMember + guestFee;
+    const feePerMember = Math.round(totalSharedCost / totalPlayers);
+    const feePerGuest = Math.round(feePerMember + guestFee);
+    const grandTotal = totalSharedCost + totalGuestFees;
+
+    const paymentMessage = `Hey guys! Thanks again for the fun games 🎾
+
+Member: ₱${feePerMember}
+Guest: ₱${feePerGuest}
+
+Please transfer to GCash:
+0917 623 6323`;
 
     document.getElementById('results').innerHTML = `
-        <strong>Number of Guests:</strong> ${guests}<br>
-        <strong>Tip per Player:</strong> ₱${tipPerPlayer.toFixed(2)}<br>
-        <strong>Fee per Member:</strong> ₱${feePerMember.toFixed(2)}<br>
-        <strong>Fee per Guest:</strong> ₱${feePerGuest.toFixed(2)}<br>
+        <strong>Guests:</strong> ${guests}<br>
+        <strong>Fee per Member:</strong> ₱${feePerMember}<br>
+        <strong>Fee per Guest:</strong> ₱${feePerGuest}<br>
         <strong>Grand Total:</strong> ₱${grandTotal.toFixed(2)}<br><br>
-        <strong>Breakdown per Court:</strong><br>${breakdown}
-<br>
-        <div contenteditable="true" style="background-color: white; border-radius:25px; border: 1px solid #dcdde1; padding: 10px;"> Hey guys! Thanks again for the fun games. Please transfer the following: <br>
-        - Member: Php ${feePerMember.toFixed(2)} <br>
-        - Guest: Php ${feePerGuest.toFixed(2)} <br> to my Gcash 0917 623 6323 Thanks!</div>
+
+        <strong>Breakdown:</strong><br>
+        ${breakdown}
+
+        <div class="message-box" id="paymentText" contenteditable="true">${paymentMessage.replace(/\n/g,'<br>')}</div>
+
+        <button onclick="copyMessage()" style="
+            margin-top:10px;
+            background:#111827;
+            color:white;
+            border:none;
+            padding:12px;
+            border-radius:16px;
+            width:100%;
+            cursor:pointer;
+            font-weight:600;
+        " id="copyBtn">📋 Copy Message</button>
     `;
 }
 
-// Default courts
-addCourtCard(3,2,'with',true);
-addCourtCard(3,2,'with',true);
+function copyMessage() {
+    const text = document.getElementById('paymentText').innerText;
+    navigator.clipboard.writeText(text);
+
+    const btn = document.getElementById('copyBtn');
+    btn.innerText = 'Copied! ✅';
+
+    setTimeout(() => {
+        btn.innerText = '📋 Copy Message';
+    }, 1500);
+}
+
+addCourtCard();
+addCourtCard();
 </script>
+
 </body>
 </html>
